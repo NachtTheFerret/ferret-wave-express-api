@@ -63,7 +63,12 @@ export class BaseModelManager<Model extends typeof BaseModel, IData extends IBas
     await this.model.destroy({ ...options, where });
   }
 
-  async get(id: string, options?: Sequelize.FindOptions): Promise<InstanceType<Model> | null> {
+  async get(id: string, options?: Sequelize.FindOptions & { scopes?: string[] }): Promise<InstanceType<Model> | null> {
+    if (options?.scopes) {
+      const record = await this.model.scope(options.scopes).findByPk(id, options);
+      return record as InstanceType<Model>;
+    }
+
     const record = await this.model.findByPk(id, options);
     return record as InstanceType<Model>;
   }
@@ -77,8 +82,13 @@ export class BaseModelManager<Model extends typeof BaseModel, IData extends IBas
 
   async find(
     where: Sequelize.WhereOptions,
-    options?: Omit<Sequelize.FindOptions, 'where'>
+    options?: Omit<Sequelize.FindOptions, 'where'> & { scopes?: string[] }
   ): Promise<InstanceType<Model> | null> {
+    if (options?.scopes) {
+      const record = await this.model.scope(options.scopes).findOne({ ...options, where });
+      return record as InstanceType<Model>;
+    }
+
     const record = await this.model.findOne({ ...options, where });
     return record as InstanceType<Model>;
   }

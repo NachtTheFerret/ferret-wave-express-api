@@ -3,6 +3,7 @@ import { IGetLocationsQuery } from './LocationValidation';
 import { Op, WhereAttributeHash } from 'sequelize';
 import { IPagination } from '../../managers/BaseModelManager';
 import { Locations } from '../../managers/LocationManager';
+import { ApiErrors } from '../../errors/ApiError';
 
 export class LocationController {
   static async getLocations(req: Request, res: Response) {
@@ -32,6 +33,41 @@ export class LocationController {
     const params = req.body;
 
     await Locations.create(params);
+
+    return res.json({ success: true });
+  }
+
+  static async getLocation(req: Request, res: Response) {
+    const { locationId } = req.params;
+
+    const location = await Locations.get(locationId);
+
+    if (!location) throw ApiErrors.NOT_FOUND('Location not found');
+
+    return res.json({ success: true, data: location });
+  }
+
+  static async updateLocation(req: Request, res: Response) {
+    const { locationId } = req.params;
+    const params = req.body;
+
+    const location = await Locations.get(locationId);
+
+    if (!location) throw ApiErrors.NOT_FOUND('Location not found');
+
+    await Locations.update(locationId, params);
+
+    return res.json({ success: true });
+  }
+
+  static async deleteLocation(req: Request, res: Response) {
+    const { locationId } = req.params;
+
+    const location = await Locations.get(locationId);
+
+    if (!location) throw ApiErrors.NOT_FOUND('Location not found');
+
+    await Locations.update(locationId, { deletedAt: new Date(), status: 'DELETED' });
 
     return res.json({ success: true });
   }

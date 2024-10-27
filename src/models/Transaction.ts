@@ -1,21 +1,21 @@
 import { AllowNull, BelongsTo, Column, DataType, Default, ForeignKey, PrimaryKey, Table } from 'sequelize-typescript';
 import { v4 as UUID } from 'uuid';
 import { LocationModel } from './Location/LocationModel';
-import { UserModel } from './UserModel';
+import { UserModel } from './User/UserModel';
 import { BaseModel, IBase } from './BaseModel_';
 
-export type LocationTransactionHistoryStatus = 'UNPAID' | 'PAID' | 'REFUNDED';
-export type LocationTransactionHistoryParticipationStatus = 'PENDING' | 'NO_NEED' | 'PARTICIPATED';
+export type TransactionStatus = 'UNPAID' | 'PAID' | 'REFUNDED';
+export type TransactionParticipationStatus = 'PENDING' | 'NO_NEED' | 'PARTICIPATED';
 
-export interface ILocationTransactionHistory extends IBase {
+export interface ITransaction extends IBase {
   id: string;
   price?: number | null;
   version: string;
-  status: LocationTransactionHistoryStatus;
+  status: TransactionStatus;
 
   // Indique si l'utilisateur qui a effectué la transaction a donné le pourcentage de participation à l'organisation
   // TODO : Faire un sytème pour gérer ça
-  participationStatus: LocationTransactionHistoryParticipationStatus;
+  participationStatus: TransactionParticipationStatus;
 
   locationId: string;
   userId: string;
@@ -25,8 +25,8 @@ export interface ILocationTransactionHistory extends IBase {
   refundedAt?: Date | null;
 }
 
-@Table({ tableName: 'location_transaction_history' })
-export class LocationTransactionHistoryModel extends BaseModel implements ILocationTransactionHistory {
+@Table({ tableName: 'transaction' })
+export class TransactionModel extends BaseModel implements ITransaction {
   @PrimaryKey
   @Default(() => UUID())
   @Column({ type: DataType.UUID })
@@ -43,12 +43,12 @@ export class LocationTransactionHistoryModel extends BaseModel implements ILocat
   @AllowNull(false)
   @Default('UNPAID')
   @Column({ type: DataType.ENUM('UNPAID', 'PAID', 'REFUNDED') })
-  declare status: LocationTransactionHistoryStatus;
+  declare status: TransactionStatus;
 
   @AllowNull(false)
   @Default('PENDING')
   @Column({ type: DataType.ENUM('PENDING', 'NO_NEED', 'PARTICIPATED') })
-  declare participationStatus: LocationTransactionHistoryParticipationStatus;
+  declare participationStatus: TransactionParticipationStatus;
 
   @AllowNull(false)
   @ForeignKey(() => LocationModel)
@@ -84,4 +84,4 @@ export class LocationTransactionHistoryModel extends BaseModel implements ILocat
   declare manager: UserModel;
 }
 
-export default LocationTransactionHistoryModel;
+export default TransactionModel;

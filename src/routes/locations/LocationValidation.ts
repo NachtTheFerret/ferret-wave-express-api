@@ -61,10 +61,10 @@ export const CreateLocationSchema = Joi.object().keys({
     )
     .required(),
   subTheme: Joi.string(),
+  price: Joi.number().precision(2),
   systemId: Joi.string().uuid().required(),
   planetId: Joi.string().uuid(),
   spaceStationId: Joi.string().uuid(),
-  // discovererId: Joi.string().uuid().required(),
 });
 
 export interface ICreateLocationBody {
@@ -73,7 +73,45 @@ export interface ICreateLocationBody {
   type: string;
   theme: string;
   subTheme?: string;
+  price?: number;
   systemId: string;
+  planetId?: string;
+  spaceStationId?: string;
+}
+
+export const UpdateLocationSchema = Joi.object().keys({
+  name: Joi.string(),
+  description: Joi.string(),
+  type: Joi.string().valid('NORMAL', 'ACTION'),
+  theme: Joi.string().valid(
+    'FAUNA',
+    'FLORA',
+    'MINERAL',
+    'CAVE',
+    'BASE',
+    'OUTPOST',
+    'RUIN',
+    'CRASH',
+    'PORTAL',
+    'SPACE',
+    'STATION',
+    'UNKNOWN'
+  ),
+  subTheme: Joi.string(),
+  price: Joi.number().precision(2),
+  systemId: Joi.string().uuid(),
+  planetId: Joi.string().uuid(),
+  spaceStationId: Joi.string().uuid(),
+});
+
+export interface IUpdateLocationBody {
+  name?: string;
+  description?: string;
+  type?: string;
+  theme?: string;
+  subTheme?: string;
+  price?: number;
+  systemId?: string;
   planetId?: string;
   spaceStationId?: string;
 }

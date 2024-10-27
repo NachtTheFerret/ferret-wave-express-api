@@ -3,7 +3,7 @@ import { v4 as UUID } from 'uuid';
 import { SystemModel } from '../SystemModel';
 import { PlanetModel } from '../PlanetModel';
 import { SpaceStationModel } from '../SpaceStationModel';
-import { UserModel } from '../UserModel';
+import { UserModel } from '../User/UserModel';
 import { BaseModel, IBase } from '../BaseModel_';
 import { LocationScopes } from './LocationScopes';
 
@@ -21,7 +21,7 @@ export type LocationTheme =
   | 'STATION'
   | 'UNKNOWN';
 
-export type LocationStatus = 'OBSOLETE' | 'PENDING' | 'VERIFIED';
+export type LocationStatus = 'OBSOLETE' | 'PENDING' | 'VERIFIED' | 'DELETED';
 
 // TODO : Ajouté une table LocationCoordinate pour gérer les coordonnées d'une location (Oui il peut y avoir plusieurs coordonnées pour une location)
 // TODO : Action : Ajouter un système de queue et enchairement d'actions
@@ -45,6 +45,13 @@ export interface ILocation extends IBase {
   discoveryDate?: Date | null;
   lastUpdatedBy?: string | null;
   lastUpdatedDate?: Date | null;
+
+  obsoleteAt?: Date | null;
+  obsoletedBy?: string | null;
+  verifiedAt?: Date | null;
+  verifiedBy?: string | null;
+  deletedAt?: Date | null;
+  deletedBy?: string | null;
 }
 
 @Table({ tableName: 'location', scopes: LocationScopes })
@@ -93,7 +100,7 @@ export class LocationModel extends BaseModel implements ILocation {
 
   @AllowNull(false)
   @Default('PENDING')
-  @Column({ type: DataType.ENUM('OBSOLETE', 'PENDING', 'VERIFIED') })
+  @Column({ type: DataType.ENUM('OBSOLETE', 'PENDING', 'VERIFIED', 'DELETED') })
   declare status: LocationStatus;
 
   @AllowNull(false)
@@ -133,6 +140,33 @@ export class LocationModel extends BaseModel implements ILocation {
   @Column({ type: DataType.DATE })
   declare lastUpdatedDate: Date | null;
 
+  @AllowNull(true)
+  @Column({ type: DataType.DATE })
+  declare obsoleteAt: Date | null;
+
+  @AllowNull(true)
+  @ForeignKey(() => UserModel)
+  @Column({ type: DataType.UUID })
+  declare obsoletedBy: string | null;
+
+  @AllowNull(true)
+  @Column({ type: DataType.DATE })
+  declare verifiedAt: Date | null;
+
+  @AllowNull(true)
+  @ForeignKey(() => UserModel)
+  @Column({ type: DataType.UUID })
+  declare verifiedBy: string | null;
+
+  @AllowNull(true)
+  @Column({ type: DataType.DATE })
+  declare deletedAt: Date | null;
+
+  @AllowNull(true)
+  @ForeignKey(() => UserModel)
+  @Column({ type: DataType.UUID })
+  declare deletedBy: string | null;
+
   // # Relations
   @BelongsTo(() => SystemModel, { onDelete: 'SET NULL', onUpdate: 'CASCADE' })
   declare system: SystemModel;
@@ -148,6 +182,15 @@ export class LocationModel extends BaseModel implements ILocation {
 
   @BelongsTo(() => UserModel, { onDelete: 'SET NULL', onUpdate: 'CASCADE', foreignKey: 'last_updated_by' })
   declare updater: UserModel | null;
+
+  @BelongsTo(() => UserModel, { onDelete: 'SET NULL', onUpdate: 'CASCADE', foreignKey: 'obsoleted_by' })
+  declare obsoletedByUser: UserModel | null;
+
+  @BelongsTo(() => UserModel, { onDelete: 'SET NULL', onUpdate: 'CASCADE', foreignKey: 'verified_by' })
+  declare verifiedByUser: UserModel | null;
+
+  @BelongsTo(() => UserModel, { onDelete: 'SET NULL', onUpdate: 'CASCADE', foreignKey: 'deleted_by' })
+  declare deletedByUser: UserModel | null;
 }
 
 export default LocationModel;

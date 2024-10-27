@@ -1,8 +1,8 @@
-import { ModelScopeOptions } from 'sequelize';
+import { ModelScopeOptions, Op } from 'sequelize';
 import PlanetModel from '../PlanetModel';
 import SpaceStationModel from '../SpaceStationModel';
 import SystemModel from '../SystemModel';
-import UserModel from '../UserModel';
+import UserModel from '../User/UserModel';
 
 export const LocationScopes = {
   defaultScope: {
@@ -29,6 +29,9 @@ export const LocationScopes = {
         as: 'system',
       },
     ],
+    where: {
+      status: { [Op.notIn]: ['DELETED', 'OBSOLETE'] },
+    },
   },
 
   scopes: {
