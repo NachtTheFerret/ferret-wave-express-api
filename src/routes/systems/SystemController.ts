@@ -43,4 +43,29 @@ export class SystemController {
 
     return res.json({ success: true, data: system });
   }
+
+  static async updateSystem(req: Request, res: Response) {
+    const { systemId } = req.params;
+    const params = req.body as ICreateSystem;
+
+    const system = await Systems.get(systemId);
+
+    if (!system) throw ApiErrors.NOT_FOUND('System not found');
+
+    await Systems.update(systemId, params);
+
+    return res.json({ success: true });
+  }
+
+  static async deleteSystem(req: Request, res: Response) {
+    const { systemId } = req.params;
+
+    const system = await Systems.get(systemId);
+
+    if (!system) throw ApiErrors.NOT_FOUND('System not found');
+
+    await Systems.delete(systemId);
+
+    return res.json({ success: true });
+  }
 }

@@ -1,33 +1,37 @@
 import { IPagination, PaginationSchema } from '../../managers/BaseModelManager';
 import Joi from 'joi';
 
-export const GetSystemsQuerySchema = Joi.object()
+export const GetPlanetsQuerySchema = Joi.object()
   .keys({
     search: Joi.string(),
+    systemId: Joi.string(),
   })
   .concat(PaginationSchema);
 
-export type IGetSystemsQuery = Partial<IPagination & { search: string }>;
+export type IGetPlanetsQuery = Partial<IPagination & { search: string; systemId: string }>;
 
-export const CreateSystemSchema = Joi.object().keys({
+export const CreatePlanetSchema = Joi.object().keys({
   name: Joi.string().required(),
   description: Joi.string(),
   security: Joi.string().valid('HIGH', 'MEDIUM', 'LOW', 'NONE', 'UNKNOWN').required(),
   bannerUrl: Joi.string().uri({ scheme: ['https'] }),
+  systemId: Joi.string().required(),
 });
 
-export type ICreateSystem = {
+export type ICreatePlanet = {
   name: string;
   description?: string;
   security: 'HIGH' | 'MEDIUM' | 'LOW' | 'NONE' | 'UNKNOWN';
   bannerUrl?: string;
+  systemId: string;
 };
 
-export const UpdateSystemSchema = Joi.object().keys({
+export const UpdatePlanetSchema = Joi.object().keys({
   name: Joi.string(),
   description: Joi.string(),
   security: Joi.string().valid('HIGH', 'MEDIUM', 'LOW', 'NONE', 'UNKNOWN'),
   bannerUrl: Joi.string().uri({ scheme: ['https'] }),
+  systemId: Joi.string(),
 });
 
-export type IUpdateSystem = Partial<ICreateSystem>;
+export type IUpdatePlanet = Partial<ICreatePlanet>;

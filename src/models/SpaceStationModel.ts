@@ -18,12 +18,10 @@ export interface ISpaceStation extends IBase {
   id: string;
   name: string;
   description: string;
+  bannerUrl: string;
 
   systemId: string;
   planetId?: string | null;
-
-  latitude: number;
-  longitude: number;
 }
 
 @Table({ tableName: 'space_station' })
@@ -42,6 +40,10 @@ export class SpaceStationModel extends BaseModel implements ISpaceStation {
   @Column({ type: DataType.TEXT })
   declare description: string;
 
+  @AllowNull(true)
+  @Column({ type: DataType.TEXT })
+  declare bannerUrl: string;
+
   @AllowNull(false)
   @ForeignKey(() => SystemModel)
   @Column({ type: DataType.UUID })
@@ -51,14 +53,6 @@ export class SpaceStationModel extends BaseModel implements ISpaceStation {
   @ForeignKey(() => PlanetModel)
   @Column({ type: DataType.UUID })
   declare planetId: string | null;
-
-  @AllowNull(false)
-  @Column({ type: DataType.DECIMAL(10, 8) })
-  declare latitude: number;
-
-  @AllowNull(false)
-  @Column({ type: DataType.DECIMAL(11, 8) })
-  declare longitude: number;
 
   // # Relations
   @BelongsTo(() => SystemModel, { onDelete: 'CASCADE', onUpdate: 'CASCADE' })

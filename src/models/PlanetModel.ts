@@ -16,12 +16,10 @@ import { BaseModel, IBase } from './BaseModel_';
 export interface IPlanet extends IBase {
   id: string;
   name: string;
-  description: string;
+  description?: string | null;
+  bannerUrl?: string | null;
 
   systemId: string;
-
-  latitude: number;
-  longitude: number;
 }
 
 @Table({ tableName: 'planet' })
@@ -40,18 +38,14 @@ export class PlanetModel extends BaseModel implements IPlanet {
   @Column({ type: DataType.TEXT })
   declare description: string;
 
+  @AllowNull(true)
+  @Column({ type: DataType.TEXT })
+  declare bannerUrl: string | null;
+
   @AllowNull(false)
   @ForeignKey(() => SystemModel)
   @Column({ type: DataType.UUID })
   declare systemId: string;
-
-  @AllowNull(false)
-  @Column({ type: DataType.DECIMAL(10, 8) })
-  declare latitude: number;
-
-  @AllowNull(false)
-  @Column({ type: DataType.DECIMAL(11, 8) })
-  declare longitude: number;
 
   // # Relations
   @BelongsTo(() => SystemModel, { onDelete: 'CASCADE', onUpdate: 'CASCADE' })

@@ -9,6 +9,7 @@ export interface ISystem extends IBase {
   name: string;
   description?: string | null;
   security: SystemSecurity;
+  bannerUrl?: string | null;
 }
 
 @Table({ tableName: 'system' })
@@ -31,6 +32,10 @@ export class SystemModel extends BaseModel implements ISystem {
   @Default('UNKNOWN')
   @Column({ type: DataType.ENUM('HIGH', 'MEDIUM', 'LOW', 'NONE', 'UNKNOWN') })
   declare security: SystemSecurity;
+
+  @AllowNull(true)
+  @Column({ type: DataType.TEXT })
+  declare bannerUrl: string | null;
 }
 
 export default SystemModel;
